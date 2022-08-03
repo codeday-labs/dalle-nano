@@ -1,5 +1,3 @@
-
-
 ---
 name: Build and Push Python Image to Google Cloud Platform
 on:
@@ -7,12 +5,12 @@ on:
     branches: [ main ]
     
 jobs:
-  build-push-gar:
+  build-push-gcr:
     name: Build and Push to GCP
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: dalle-nano
-      PROJECT_ID: codeday-355723
+      IMAGE_NAME: dalle-webapp
+      PROJECT_ID: total-thinker-356217
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -21,11 +19,11 @@ jobs:
       name: Authenticate to Google Cloud
       uses: 'google-github-actions/auth@v0'
       with:
-        credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+        credentials_json: ${{ secrets.SERVICE_ACCOUNT_KEY }}
       
     - uses: google-github-actions/setup-gcloud@v0
       #with:
-        #service_account_key: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+        #service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         #project_id: ${{ env.PROJECT_ID }}
         #export_default_credentials: true
 
@@ -38,14 +36,5 @@ jobs:
     - name: Push Docker Image to Artifact Registry
 
       run: |-
-        docker tag $IMAGE_NAME:latest us-west2-docker.pkg.dev/$PROJECT_ID/nano/$IMAGE_NAME:latest
-        docker push us-west2-docker.pkg.dev/$PROJECT_ID/nano/$IMAGE_NAME:latest
-        
-    - name: Upload and Deploy Model
-      env: 
-        GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-      run: |-
-        pip install google-auth
-        pip install google-cloud-aiplatform
-        pip install google-cloud-artifact-registry
-        python auto/deploy_model.py
+        docker tag $IMAGE_NAME:latest us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+        docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
